@@ -47,6 +47,11 @@ export default function Dashboard() {
     [data]
   );
 
+  const maxSkill = useMemo(
+    () => Math.max(1, ...(data?.skills.map((s) => s.count) ?? [0])),
+    [data]
+  );
+
   return (
     <main style={S.main}>
       <header style={S.header}>
@@ -118,6 +123,33 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      {!loading && !err && data && data.skills.length > 0 && (
+        <section style={S.breakdownCard}>
+          <h2 style={S.h2}>Skill breakdown</h2>
+          <div style={S.breakdownList}>
+            {data.skills.map((s) => (
+              <button
+                key={s.skill}
+                onClick={() => setSkill(skill === s.skill ? "" : s.skill)}
+                style={{
+                  ...S.breakdownRow,
+                  ...(skill === s.skill ? S.breakdownRowActive : {}),
+                }}
+                title={`Filter chart by ${s.skill}`}
+              >
+                <span style={S.breakdownName}>{s.skill}</span>
+                <span style={S.breakdownTrack}>
+                  <span
+                    style={{ ...S.breakdownFill, width: `${(s.count / maxSkill) * 100}%` }}
+                  />
+                </span>
+                <span style={S.breakdownCount}>{s.count}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
@@ -193,4 +225,38 @@ const S: Record<string, React.CSSProperties> = {
   },
   muted: { color: "#64748b" },
   error: { color: "#dc2626" },
+  h2: { fontSize: "1.1rem", margin: "0 0 1rem" },
+  breakdownCard: {
+    border: "1px solid #e2e8f0",
+    borderRadius: 12,
+    padding: "1.5rem",
+    background: "#fff",
+    marginTop: "1.5rem",
+  },
+  breakdownList: { display: "flex", flexDirection: "column", gap: "0.5rem" },
+  breakdownRow: {
+    display: "grid",
+    gridTemplateColumns: "220px 1fr 48px",
+    alignItems: "center",
+    gap: "0.75rem",
+    padding: "0.4rem 0.5rem",
+    border: "1px solid transparent",
+    borderRadius: 8,
+    background: "transparent",
+    cursor: "pointer",
+    textAlign: "left",
+    width: "100%",
+    font: "inherit",
+    color: "#0f172a",
+  },
+  breakdownRowActive: { borderColor: ACCENT, background: "#eff6ff" },
+  breakdownName: {
+    fontSize: "0.85rem",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  breakdownTrack: { background: "#f1f5f9", borderRadius: 6, height: 16, overflow: "hidden" },
+  breakdownFill: { display: "block", height: "100%", background: ACCENT, borderRadius: 6 },
+  breakdownCount: { fontSize: "0.85rem", fontWeight: 600, textAlign: "right", color: "#334155" },
 };
