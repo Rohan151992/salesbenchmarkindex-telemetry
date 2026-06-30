@@ -7,6 +7,9 @@ export default function Home() {
       <p>
         Health check: <a href="/api/skill-usage">/api/skill-usage</a>
       </p>
+      <p>
+        Usage dashboard: <a href="/dashboard">/dashboard</a>
+      </p>
     </main>
   );
 }
